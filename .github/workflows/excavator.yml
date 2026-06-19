@@ -1,0 +1,27 @@
+name: Excavator
+
+# Auto-update the bdinfo-rs manifest: poll the upstream GitHub releases (checkver),
+# rewrite the version + URLs, recompute the hashes, and commit. Runs in THIS repo,
+# so it needs only the built-in GITHUB_TOKEN (no PAT). Public repo => free minutes.
+
+on:
+  schedule:
+    - cron: "0 6 * * *" # once daily
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: excavator
+  cancel-in-progress: false
+
+jobs:
+  excavate:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7
+
+      - uses: ScoopInstaller/GithubActions@e174c3bef2aeec16a40f2f075cafa167733f0a3e # main
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
